@@ -10,7 +10,19 @@ class Repository:
         self.session.commit()
 
     def fetch_supplier_by_id(self, supplier_id: int):
-        return self.session.query(Supplier).filter(Supplier.id == supplier_id).first()
+        return (self
+                .session
+                .query(Supplier)
+                .filter(Supplier.id == supplier_id)
+                .first()
+        )
+
+    def fetch_all_suppliers(self):
+        return (self
+                .session
+                .query(Supplier)
+                .all()
+        )
 
     def update_supplier(self, supplier: Supplier):
         self.session.merge(supplier)

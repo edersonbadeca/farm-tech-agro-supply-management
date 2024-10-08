@@ -16,7 +16,7 @@ class Supplier(Base):
     inputs = relationship('Input', back_populates='supplier')
 
 class Input(Base):
-    __tablename__ = 'inputs'
+    __tablename__ = 'inputs.py'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
@@ -26,14 +26,14 @@ class Input(Base):
     supplier_id = Column(Integer, ForeignKey('suppliers.id'))
     addition_date = Column(Date, nullable=False)
 
-    supplier = relationship('Supplier', back_populates='inputs')
+    supplier = relationship('Supplier', back_populates='inputs.py')
     stock_movements = relationship('StockMovement', back_populates='input')
 
 class StockMovement(Base):
     __tablename__ = 'stock_movements'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    input_id = Column(Integer, ForeignKey('inputs.id'), nullable=False)
+    input_id = Column(Integer, ForeignKey('inputs.py.id'), nullable=False)
     quantity = Column(Numeric, nullable=False)
     movement_type = Column(String(10), nullable=False)
     movement_date = Column(Date, nullable=False)

@@ -4,8 +4,8 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models.models import Base
-from repository.repository import Repository
-from service.supplier_service import SupplierService
+from repository.supplier import Repository
+from service.supplier import SupplierService
 
 
 def main():

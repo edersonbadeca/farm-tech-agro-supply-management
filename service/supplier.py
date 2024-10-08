@@ -1,4 +1,4 @@
-from repository.repository import Repository
+from repository.supplier import Repository
 from models.models import Supplier
 
 class SupplierService:
