@@ -1,8 +1,8 @@
-from repository.supplier import Repository
+from repository.supplier import Supplier, SupplierRepository
 from models.models import Supplier
 
 class SupplierService:
-    def __init__(self, repository: Repository):
+    def __init__(self, repository: SupplierRepository):
         self.repository = repository
 
     def create_supplier(self, name: str, contact_info: str, address: str):

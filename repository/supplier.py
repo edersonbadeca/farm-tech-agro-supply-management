@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from models.models import Supplier, Input, StockMovement
 
-class Repository:
+class SupplierRepository:
     def __init__(self, session: Session):
         self.session = session
 
