@@ -1,13 +1,22 @@
-# services/service_stock_movements.py
+from datetime import datetime
+from enum import Enum
+
 from repository.stock_movements import StockMovementRepository
 from models.models import StockMovement
+
+
+class MovementType(Enum):
+    IN = 'IN'
+    OUT = 'OUT'
 
 class StockMovementService:
     def __init__(self, repository: StockMovementRepository):
         self.repository = repository
 
-    def create_stock_movement(self, input_id: int, quantity: int, movement_type: str):
-        new_movement = StockMovement(input_id=input_id, quantity=quantity, movement_type=movement_type)
+    def create_stock_movement(self, input_id: int, quantity: int, movement_type: MovementType,
+                              movement_date: datetime.date = datetime.now().date()):
+        new_movement = StockMovement(input_id=input_id, quantity=quantity, movement_type=movement_type.value,
+                                     movement_date=movement_date)
         self.repository.add_stock_movement(new_movement)
         return new_movement
 
@@ -33,3 +42,4 @@ class StockMovementService:
 
     def get_all_stock_movements(self):
         return self.repository.get_all_stock_movements()
+

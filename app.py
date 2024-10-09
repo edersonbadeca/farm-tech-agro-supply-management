@@ -1,10 +1,12 @@
 import os
+from datetime import datetime
+
 import click
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from service.supplier import SupplierService
 from service.supplier_inputs import InputService
-from service.stock_movements import StockMovementService
+from service.stock_movements import StockMovementService, MovementType
 from repository.supplier import SupplierRepository
 from repository.inputs import InputRepository
 from repository.stock_movements import StockMovementRepository
@@ -17,7 +19,7 @@ db_port = os.getenv('DB_PORT')
 db_service_name = os.getenv('DB_SERVICE_NAME')
 
 connection_string = f'oracle+oracledb://{db_user}:{db_password}@{db_hostname}:{db_port}/?service_name={db_service_name}'
-engine = create_engine(connection_string, echo=db_echo)
+engine = create_engine(connection_string, echo=False)
 
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -29,6 +31,12 @@ stock_movement_service = StockMovementService(stock_movement_repository)
 supplier_repository = SupplierRepository(session)
 supplier_service = SupplierService(supplier_repository)
 
+def validate_date(ctx, param, value):
+    try:
+        datetime.strptime(value, '%Y-%m-%d')
+        return value
+    except ValueError:
+        raise click.BadParameter(f"A data '{value}' não está no formato correto (YYYY-MM-DD).")
 
 def validate_env() -> None:
     """Valida as variáveis de ambiente necessárias."""
@@ -65,7 +73,7 @@ def create_supplier(name, contact_info, address):
 @click.option('--supplier_id', prompt='ID do fornecedor', help='ID do fornecedor.')
 def get_supplier(supplier_id):
     """Consulta um fornecedor por ID."""
-    supplier = supplier_service.get_supplier(supplier_id)
+    supplier = supplier_service.fetch_supplier(supplier_id)
     if supplier:
         click.echo(
             f'Fornecedor encontrado: {supplier.name}, Contato: {supplier.contact_info}, Endereço: {supplier.address}')
@@ -76,7 +84,7 @@ def get_supplier(supplier_id):
 @click.command()
 def list_suppliers():
     """Lista todos os fornecedores."""
-    suppliers = supplier_service.get_all_suppliers()
+    suppliers = supplier_service.fetch_all_suppliers()
     for supplier in suppliers:
         click.echo(f'{supplier.id}: {supplier.name}, Contato: {supplier.contact_info}, Endereço: {supplier.address}')
 
@@ -85,11 +93,15 @@ def list_suppliers():
 @click.option('--name', prompt='Nome do insumo', help='Nome do insumo.')
 @click.option('--category', prompt='Categoria', help='Categoria do insumo.')
 @click.option('--quantity', prompt='Quantidade', help='Quantidade disponível do insumo.', type=int)
-@click.option('--expiration_date', prompt='Data de expiração', help='Data de expiração (YYYY-MM-DD).')
+@click.option('--expiration_date', prompt='Data de expiração', help='Data de expiração (YYYY-MM-DD).',  callback=validate_date)
 @click.option('--supplier_id', prompt='ID do fornecedor', help='ID do fornecedor do insumo.', type=int)
 def create_input(name, category, quantity, expiration_date, supplier_id):
     """Adiciona um novo insumo agrícola."""
-    new_input = input_service.create_input(name, category, quantity, expiration_date, supplier_id)
+    converted_date = datetime.strptime(expiration_date, '%Y-%m-%d')
+    new_input = input_service.create_input(name, category, quantity, converted_date, supplier_id)
+    if new_input is None:
+        click.echo('Fornecedor não encontrado!')
+        return
     click.echo(f'Insumo {new_input.name} criado com sucesso!')
 
 
@@ -117,10 +129,18 @@ def list_inputs():
 @click.command()
 @click.option('--input_id', prompt='ID do insumo', help='ID do insumo.', type=int)
 @click.option('--quantity', prompt='Quantidade', help='Quantidade movimentada.', type=int)
-@click.option('--movement_type', prompt='Tipo de movimentação', help="Tipo de movimentação ('in' ou 'out').")
-def create_stock_movement(input_id, quantity, movement_type):
+@click.option('--type', prompt='Tipo de movimentação', help="Tipo de movimentação ('in' ou 'out').")
+@click.option('--when', prompt='Data da movimentação', help="Data da  movimentação (YYYY-MM-DD).",  callback=validate_date)
+def create_stock_movement(input_id, quantity, type, when):
     """Adiciona uma movimentação de estoque."""
-    movement = stock_movement_service.create_stock_movement(input_id, quantity, movement_type)
+    movement_date = datetime.now()
+    movement_type = MovementType(type.__str__().upper())
+    if movement_type not in MovementType:
+        click.echo('Tipo de movimentação inválido!')
+        return
+    if when is not None:
+        movement_date = datetime.strptime(when, '%Y-%m-%d')
+    movement = stock_movement_service.create_stock_movement(input_id, quantity, movement_type, movement_date)
     click.echo(f'Movimentação de {movement.quantity} unidades criada com sucesso!')
 
 

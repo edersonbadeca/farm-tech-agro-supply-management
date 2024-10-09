@@ -13,6 +13,9 @@ class SupplierService:
     def fetch_supplier(self, supplier_id: int):
         return self.repository.fetch_supplier_by_id(supplier_id)
 
+    def fetch_all_suppliers(self):
+        return self.repository.fetch_all_suppliers()
+
     def update_supplier(self, supplier_id: int, name: str, contact_info: str, address: str):
         supplier = self.repository.fetch_supplier_by_id(supplier_id)
         if supplier:

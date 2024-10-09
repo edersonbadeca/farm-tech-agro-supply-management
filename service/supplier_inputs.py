@@ -7,6 +7,8 @@ class InputService:
         self.repository = repository
 
     def create_input(self, name: str, category: str, quantity: int, expiration_date, supplier_id: int):
+        if not self.supplier_exists(supplier_id):
+            return None
         new_input = Input(
             name=name,
             category=category,
@@ -41,3 +43,8 @@ class InputService:
 
     def get_all_inputs(self):
         return self.repository.get_all_inputs()
+
+    def supplier_exists(self, supplier_id: int):
+        supplier = self.repository.get_input_by_id(supplier_id)
+        return supplier is not None
+
