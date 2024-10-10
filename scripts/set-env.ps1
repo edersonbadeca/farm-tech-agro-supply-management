@@ -1,6 +1,6 @@
 $env:DB_PASSWORD = "123456"
 $env:DB_HOSTNAME = "localhost"
-$env:DEBUG = "True"
+$env:DEBUG = "False"
 $env:DB_PORT = "1521"
 $env:DB_USER = "APP"
 $env:DB_SERVICE_NAME = "FREE"

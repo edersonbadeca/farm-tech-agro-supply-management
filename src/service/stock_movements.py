@@ -28,7 +28,7 @@ class StockMovementService:
         """
         self.repository = repository
 
-    def create_stock_movement(self, input_id: int, quantity: int, movement_type: MovementType,
+    def create_stock_movement(self, input_id: int, quantity: int, movement_type: str,
                               movement_date: datetime.date = datetime.now().date()) -> StockMovement:
         """
         Creates a new stock movement.
@@ -42,7 +42,7 @@ class StockMovementService:
         new_movement = StockMovement(
             input_id=input_id,
             quantity=quantity,
-            movement_type=movement_type.value,
+            movement_type=movement_type,
             movement_date=movement_date
         )
         self.repository.add_stock_movement(new_movement)

@@ -36,7 +36,7 @@ supplier_service = SupplierService(supplier_repository)
 input_service = InputService(input_repository, supplier_service)
 
 
-def validate_date(value):
+def validate_date(ctx, self, value):
     try:
         datetime.strptime(value, '%Y-%m-%d')
         return value
