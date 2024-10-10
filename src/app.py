@@ -41,11 +41,11 @@ def validate_date(value):
         datetime.strptime(value, '%Y-%m-%d')
         return value
     except ValueError:
-        raise click.BadParameter(f"A data '{value}' não está no formato correto (YYYY-MM-DD).")
+        raise click.BadParameter(f"The date '{value}' is not in the correct format (YYYY-MM-DD).")
 
 
 def validate_env() -> None:
-    """Valida as variáveis de ambiente necessárias."""
+    """Validates the required environment variables."""
     required_vars = [
         'DB_USER',
         'DB_PASSWORD',
@@ -59,141 +59,141 @@ def validate_env() -> None:
 
 
 def serialize_model(model):
-    """Converte um objeto SQLAlchemy em um dicionário, excluindo atributos indesejados."""
+    """Converts a SQLAlchemy object into a dictionary, excluding unwanted attributes."""
     return {key: value for key, value in model.__dict__.items() if not key.startswith('_')}
 
 
 def output_json(data):
-    """Converte os dados para JSON e exibe."""
+    """Converts data to JSON and displays it."""
     click.echo(json.dumps(data, default=str, indent=4))
 
 
 @click.group()
 def cli():
-    """Aplicação CLI para gestão de insumos agrícolas."""
+    """CLI application for managing agricultural supplies."""
     validate_env()
 
 
 @click.command()
-@click.option('--name', prompt='Nome do fornecedor', help='Nome do fornecedor.')
-@click.option('--contact_info', prompt='Contato', help='Informações de contato do fornecedor.')
-@click.option('--address', prompt='Endereço', help='Endereço do fornecedor.')
+@click.option('--name', prompt='Supplier name', help='Name of the supplier.')
+@click.option('--contact_info', prompt='Contact', help='Contact information of the supplier.')
+@click.option('--address', prompt='Address', help='Address of the supplier.')
 def create_supplier(name, contact_info, address):
-    """Adiciona um novo fornecedor."""
+    """Adds a new supplier."""
     supplier = supplier_service.create_supplier(name, contact_info, address)
-    output_json({'message': f'Fornecedor {supplier.name} criado com sucesso!', 'supplier': serialize_model(supplier)})
+    output_json({'message': f'Supplier {supplier.name} successfully created!', 'supplier': serialize_model(supplier)})
 
 
 @click.command()
-@click.option('--supplier_id', prompt='ID do fornecedor', help='ID do fornecedor.')
+@click.option('--supplier_id', prompt='Supplier ID', help='ID of the supplier.')
 def get_supplier(supplier_id):
-    """Consulta um fornecedor por ID."""
+    """Fetches a supplier by ID."""
     supplier = supplier_service.fetch_supplier(supplier_id)
     if supplier:
         output_json({'supplier': serialize_model(supplier)})
     else:
-        output_json({'error': 'Fornecedor não encontrado!'})
+        output_json({'error': 'Supplier not found!'})
 
 
 @click.command()
 def list_suppliers():
-    """Lista todos os fornecedores."""
+    """Lists all suppliers."""
     suppliers = supplier_service.fetch_all_suppliers()
     output_json([serialize_model(supplier) for supplier in suppliers])
 
 
 @click.command()
-@click.option('--name', prompt='Nome do insumo', help='Nome do insumo.')
-@click.option('--category', prompt='Categoria', help='Categoria do insumo.')
-@click.option('--quantity', prompt='Quantidade', help='Quantidade disponível do insumo.', type=int)
-@click.option('--expiration_date', prompt='Data de expiração', help='Data de expiração (YYYY-MM-DD).', callback=validate_date)
-@click.option('--supplier_id', prompt='ID do fornecedor', help='ID do fornecedor do insumo.', type=int)
+@click.option('--name', prompt='Input name', help='Name of the input.')
+@click.option('--category', prompt='Category', help='Category of the input.')
+@click.option('--quantity', prompt='Quantity', help='Available quantity of the input.', type=int)
+@click.option('--expiration_date', prompt='Expiration date', help='Expiration date (YYYY-MM-DD).', callback=validate_date)
+@click.option('--supplier_id', prompt='Supplier ID', help='ID of the supplier of the input.', type=int)
 def create_input(name, category, quantity, expiration_date, supplier_id):
-    """Adiciona um novo insumo agrícola."""
+    """Adds a new agricultural input."""
     converted_date = datetime.strptime(expiration_date, '%Y-%m-%d')
     new_input = input_service.create_input(name, category, quantity, converted_date, supplier_id)
     if new_input is None:
-        output_json({'error': 'Fornecedor não encontrado!'})
+        output_json({'error': 'Supplier not found!'})
     else:
-        output_json({'message': f'Insumo {new_input.name} criado com sucesso!', 'input': serialize_model(new_input)})
+        output_json({'message': f'Input {new_input.name} successfully created!', 'input': serialize_model(new_input)})
 
 
 @click.command()
-@click.option('--input_id', prompt='ID do insumo', help='ID do insumo.')
+@click.option('--input_id', prompt='Input ID', help='ID of the input.')
 def get_input(input_id):
-    """Consulta um insumo por ID."""
+    """Fetches an input by ID."""
     input_item = input_service.get_input(input_id)
     if input_item:
         output_json({'input': serialize_model(input_item)})
     else:
-        output_json({'error': 'Insumo não encontrado!'})
+        output_json({'error': 'Input not found!'})
 
 
 @click.command()
 def list_inputs():
-    """Lista todos os insumos."""
+    """Lists all inputs."""
     inputs = input_service.get_all_inputs()
     output_json([serialize_model(input_item) for input_item in inputs])
 
 
 @click.command()
-@click.option('--input_id', prompt='ID do insumo', help='ID do insumo.', type=int)
-@click.option('--quantity', prompt='Quantidade', help='Quantidade movimentada.', type=int)
-@click.option('--movement_type', '-t', prompt='Tipo de movimentação', help="Tipo de movimentação ('IN' ou 'OUT').",
+@click.option('--input_id', prompt='Input ID', help='ID of the input.', type=int)
+@click.option('--quantity', prompt='Quantity', help='Quantity moved.', type=int)
+@click.option('--movement_type', '-t', prompt='Movement type', help="Movement type ('IN' or 'OUT').",
               type=click.Choice(['IN', 'OUT'], case_sensitive=False))
-@click.option('--when', prompt='Data da movimentação', help="Data da movimentação (YYYY-MM-DD).", callback=validate_date)
+@click.option('--when', prompt='Movement date', help="Movement date (YYYY-MM-DD).", callback=validate_date)
 def create_stock_movement(input_id, quantity, movement_type, when):
-    """Adiciona uma movimentação de estoque."""
+    """Adds a stock movement."""
     movement_date = datetime.now()
     if when is not None:
         movement_date = datetime.strptime(when, '%Y-%m-%d')
     movement = stock_movement_service.create_stock_movement(input_id, quantity, movement_type, movement_date)
-    output_json({'message': f'Movimentação de {movement.quantity} unidades criada com sucesso!', 'movement': serialize_model(movement)})
+    output_json({'message': f'{movement.quantity} units of movement successfully created!', 'movement': serialize_model(movement)})
 
 
 @click.command()
-@click.option('--movement_id', prompt='ID da movimentação', help='ID da movimentação.')
+@click.option('--movement_id', prompt='Movement ID', help='ID of the movement.')
 def get_stock_movement(movement_id):
-    """Consulta uma movimentação por ID."""
+    """Fetches a movement by ID."""
     movement = stock_movement_service.get_stock_movement(movement_id)
     if movement:
         output_json({'movement': serialize_model(movement)})
     else:
-        output_json({'error': 'Movimentação não encontrada!'})
+        output_json({'error': 'Movement not found!'})
 
 
 @click.command()
 def list_stock_movements():
-    """Lista todas as movimentações de estoque."""
+    """Lists all stock movements."""
     movements = stock_movement_service.get_all_stock_movements()
     output_json([serialize_model(movement) for movement in movements])
 
 
 @click.command()
-@click.option('--input_id', prompt='ID do insumo', help='ID do insumo.', type=int)
-@click.option('--name', prompt='Nome do insumo', help='Nome do insumo.')
-@click.option('--category', prompt='Categoria', help='Categoria do insumo.')
-@click.option('--quantity', prompt='Quantidade', help='Quantidade disponível do insumo.', type=int)
-@click.option('--expiration_date', prompt='Data de expiração', help='Data de expiração (YYYY-MM-DD).', callback=validate_date)
-@click.option('--supplier_id', prompt='ID do fornecedor', help='ID do fornecedor do insumo.', type=int)
+@click.option('--input_id', prompt='Input ID', help='ID of the input.', type=int)
+@click.option('--name', prompt='Input name', help='Name of the input.')
+@click.option('--category', prompt='Category', help='Category of the input.')
+@click.option('--quantity', prompt='Quantity', help='Available quantity of the input.', type=int)
+@click.option('--expiration_date', prompt='Expiration date', help='Expiration date (YYYY-MM-DD).', callback=validate_date)
+@click.option('--supplier_id', prompt='Supplier ID', help='ID of the supplier of the input.', type=int)
 def update_input(input_id, name, category, quantity, expiration_date, supplier_id):
-    """Atualiza um insumo existente."""
+    """Updates an existing input."""
     converted_date = datetime.strptime(expiration_date, '%Y-%m-%d')
     updated_input = input_service.update_input(input_id, name, category, quantity, converted_date, supplier_id)
     if updated_input is None:
-        output_json({'error': 'Insumo ou fornecedor não encontrado!'})
+        output_json({'error': 'Input or supplier not found!'})
     else:
-        output_json({'message': f'Insumo {updated_input.name} atualizado com sucesso!', 'input': serialize_model(updated_input)})
+        output_json({'message': f'Input {updated_input.name} successfully updated!', 'input': serialize_model(updated_input)})
 
 
 @click.command()
-@click.option('--input_id', prompt='ID do insumo', help='ID do insumo.', type=int)
+@click.option('--input_id', prompt='Input ID', help='ID of the input.', type=int)
 def delete_input(input_id):
-    """Deleta um insumo por ID."""
+    """Deletes an input by ID."""
     if input_service.delete_input(input_id):
-        output_json({'message': 'Insumo deletado com sucesso!'})
+        output_json({'message': 'Input successfully deleted!'})
     else:
-        output_json({'error': 'Insumo não encontrado!'})
+        output_json({'error': 'Input not found!'})
 
 
 cli.add_command(create_supplier)
