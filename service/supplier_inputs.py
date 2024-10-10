@@ -1,10 +1,12 @@
 from repository.inputs import InputRepository
 from models.models import Input
+from service.supplier import SupplierService
 
 
 class InputService:
-    def __init__(self, repository: InputRepository):
+    def __init__(self, repository: InputRepository, supplier_service: SupplierService):
         self.repository = repository
+        self.supplier_service = supplier_service
 
     def create_input(self, name: str, category: str, quantity: int, expiration_date, supplier_id: int):
         if not self.supplier_exists(supplier_id):
@@ -45,6 +47,6 @@ class InputService:
         return self.repository.get_all_inputs()
 
     def supplier_exists(self, supplier_id: int):
-        supplier = self.repository.get_input_by_id(supplier_id)
+        supplier = self.supplier_service.fetch_supplier(supplier_id)
         return supplier is not None
 

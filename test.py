@@ -28,14 +28,15 @@ def main():
 
     input_repository = InputRepository(session)
     stock_movement_repository = StockMovementRepository(session)
-    input_service = InputService(input_repository)
+
     stock_movement_service = StockMovementService(stock_movement_repository)
     supplier_repository = SupplierRepository(session)
     supplier_service = SupplierService(supplier_repository)
+    input_service = InputService(input_repository, supplier_service)
 
     #supplier_service.create_supplier('test', 'contact_info', 'address')
     expiration_date = datetime.strptime('2021-01-01', '%Y-%m-%d')
-    c = input_service.create_input('test', 'category', 10, expiration_date, 2)
+    c = input_service.create_input('test', 'category', 10, expiration_date, 1)
     print(c)
     # moviment_date = datetime.strptime('2021-01-01', '%Y-%m-%d')
 
