@@ -166,7 +166,6 @@ def list_stock_movements():
     output_json([serialize_model(movement) for movement in movements])
 
 
-# Atualização dos outros comandos (update e delete) segue o mesmo padrão.
 @click.command()
 @click.option('--input_id', prompt='ID do insumo', help='ID do insumo.', type=int)
 @click.option('--name', prompt='Nome do insumo', help='Nome do insumo.')
@@ -194,7 +193,6 @@ def delete_input(input_id):
         output_json({'error': 'Insumo não encontrado!'})
 
 
-# Registro dos comandos na CLI
 cli.add_command(create_supplier)
 cli.add_command(get_supplier)
 cli.add_command(list_suppliers)
