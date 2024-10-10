@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from typing import List, Optional, Type
+from typing import Optional, Type
 from models.models import StockMovement
 
 class StockMovementRepository:

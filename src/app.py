@@ -1,5 +1,6 @@
 import os
 import json
+import sys
 from datetime import datetime
 
 import click
@@ -7,10 +8,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from service.supplier import SupplierService
 from service.supplier_inputs import InputService
-from service.stock_movements import StockMovementService, MovementType
+from service.stock_movements import StockMovementService
 from repository.supplier import SupplierRepository
 from repository.inputs import InputRepository
 from repository.stock_movements import StockMovementRepository
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
 
 db_user = os.getenv('DB_USER')
 db_password = os.getenv('DB_PASSWORD')

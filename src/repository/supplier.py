@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
-from typing import List, Optional, Type
-from models.models import Supplier, Input, StockMovement
+from typing import Optional, Type
+from models.models import Supplier
+
 
 class SupplierRepository:
     """

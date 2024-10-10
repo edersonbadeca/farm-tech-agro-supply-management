@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import Optional, List, Type
+from typing import Optional, Type
 
 from repository.stock_movements import StockMovementRepository
 from models.models import StockMovement
@@ -12,6 +12,7 @@ class MovementType(Enum):
     """
     IN = 'IN'
     OUT = 'OUT'
+
 
 class StockMovementService:
     """
@@ -56,7 +57,8 @@ class StockMovementService:
         """
         return self.repository.get_stock_movement_by_id(movement_id)
 
-    def update_stock_movement(self, movement_id: int, input_id: int, quantity: int, movement_type: str) -> Optional[StockMovement]:
+    def update_stock_movement(self, movement_id: int, input_id: int, quantity: int, movement_type: str) -> Optional[
+        StockMovement]:
         """
         Updates an existing stock movement.
 
