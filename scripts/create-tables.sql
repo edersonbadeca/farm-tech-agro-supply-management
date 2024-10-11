@@ -27,7 +27,6 @@ CREATE TABLE APP.inputs (
     quantity INTEGER NOT NULL,
     expiration_date DATE NOT NULL,
     supplier_id INTEGER,
-    addition_date DATE DEFAULT SYSDATE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (supplier_id) REFERENCES APP.suppliers(id)
@@ -61,3 +60,4 @@ END;
 
 ALTER TABLE APP.stock_movements
 ADD CONSTRAINT chk_movement_type CHECK (movement_type IN ('IN', 'OUT'));
+

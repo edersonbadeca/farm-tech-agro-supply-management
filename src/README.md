@@ -54,6 +54,13 @@ farm-tech-agro-supply-management/
      ```
 
    - Edit the `.env` file to include your database credentials.
+   - Export the environment variables:
+
+     ```bash
+     export $(cat .env)
+     # windows users can use the the set-env.ps1 script
+    \.scripts\set-env.ps1
+     ```
 
 3. **Install dependencies:**
 
@@ -75,12 +82,15 @@ farm-tech-agro-supply-management/
        -v oracle-volume:/opt/oracle/oradata \
        --name oracle \
        gvenzl/oracle-free
+     # windows:
+     docker run -d -p 1521:1521 -e ORACLE_PASSWORD=123456 -v oracle-volume:/opt/oracle/oradata --name oracle gvenzl/oracle-free
      ```
+    Connect to your database client using SYSTEM user to create the database and user for the application.
 
-   - Run the SQL scripts in the `scripts` directory to initialize the database.
+    Run the SQL scripts in the scripts directory to initialize the database.
 
 5. **Run the application:**
-
+    navigate to the src folder and run the app.py file
    ```bash
    python app.py --help
    ```
@@ -124,8 +134,6 @@ The application uses environment variables for configuration. The following vari
 - `DB_HOSTNAME`: Database hostname
 - `DB_PORT`: Database port (default is `1521`)
 - `DB_SERVICE_NAME`: Oracle service name
-
-These should be set in the `.env` file.
 
 ## Development
 

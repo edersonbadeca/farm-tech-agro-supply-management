@@ -25,7 +25,6 @@ class Input(Base):
     quantity = Column(Numeric, nullable=False)
     expiration_date = Column(Date, nullable=False)
     supplier_id = Column(Integer, ForeignKey('suppliers.id'))
-    addition_date = Column(Date, nullable=False)
 
     # Relacionamento com a tabela Supplier
     supplier = relationship('Supplier', back_populates='inputs')

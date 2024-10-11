@@ -23,7 +23,7 @@ db_port = os.getenv('DB_PORT')
 db_service_name = os.getenv('DB_SERVICE_NAME')
 
 connection_string = f'oracle+oracledb://{db_user}:{db_password}@{db_hostname}:{db_port}/?service_name={db_service_name}'
-engine = create_engine(connection_string, echo=db_echo)
+engine = create_engine(connection_string, echo=False)
 
 Session = sessionmaker(bind=engine)
 session = Session()
