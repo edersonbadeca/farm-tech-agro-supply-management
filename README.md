@@ -41,6 +41,8 @@ Para executar o código, siga as [instruções de instalação e configuração]
 
 ## 🗃 Histórico de lançamentos
 
+* 1.0.0 - 15/10/2024
+    * Create release
 * 0.5.0 - 15/10/2024
     * Add generate-report output file
 * 0.4.0 - 10/10/2024
