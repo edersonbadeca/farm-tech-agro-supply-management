@@ -125,6 +125,7 @@ The CLI provides the following commands:
   - `create-stock-movement`: Add a stock movement (in or out).
   - `get-stock-movement`: Fetch details of a stock movement by ID.
   - `list-stock-movements`: List all stock movements.
+  - `generate-report`:  Generates a report of stock movements and...
 
 ## Configuration
 
