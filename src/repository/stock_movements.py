@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 from typing import Optional, Type
 from models.models import StockMovement
 
@@ -58,3 +59,30 @@ class StockMovementRepository:
         :return: List of StockMovement objects.
         """
         return self.session.query(StockMovement).all()
+
+    def generate_movement_report(self):
+        sql = text("""
+            SELECT 
+                sm.id AS movement_id,
+                sm.quantity AS movement_quantity,
+                sm.movement_type AS movement_type,
+                sm.movement_date AS movement_date,
+                i.name AS input_name,
+                s.name AS supplier_name
+            FROM 
+                stock_movements sm
+            JOIN 
+                inputs i ON sm.input_id = i.id
+            JOIN 
+                suppliers s ON i.supplier_id = s.id
+        """)
+        result = self.session.execute(sql).mappings().all()
+        print(result)
+        return [{
+            'movement_id': row['movement_id'],
+            'movement_quantity': row['movement_quantity'],
+            'movement_type': row['movement_type'],
+            'movement_date': row['movement_date'],
+            'input_name': row['input_name'],
+            'supplier_name': row['supplier_name'],
+        } for row in result]

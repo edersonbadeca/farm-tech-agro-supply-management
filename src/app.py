@@ -1,3 +1,4 @@
+import csv
 import os
 import json
 import sys
@@ -196,6 +197,31 @@ def delete_input(input_id):
         output_json({'error': 'Input not found!'})
 
 
+@click.command()
+@click.option('--output', prompt='Output CSV file path', help='Path to save the generated report CSV.')
+def generate_report(output):
+    """Generates a report of stock movements and exports it to a CSV file."""
+    movements = stock_movement_service.generate_movement_report()
+
+    # Defining the CSV headers
+    headers = ['ID', 'Quantity', 'Movement Type', 'Movement Date', 'Input Name', 'Supplier Name']
+
+    # Writing the data to a CSV file
+    with open(output, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(headers)
+        for movement in movements:
+            writer.writerow([
+                movement['movement_id'],
+                movement['movement_quantity'],
+                movement['movement_type'],
+                movement['movement_date'],
+                movement['input_name'],
+                movement['supplier_name']
+            ])
+
+    click.echo(f'Report successfully generated at {output}!')
+
 cli.add_command(create_supplier)
 cli.add_command(get_supplier)
 cli.add_command(list_suppliers)
@@ -207,6 +233,7 @@ cli.add_command(get_stock_movement)
 cli.add_command(list_stock_movements)
 cli.add_command(update_input)
 cli.add_command(delete_input)
+cli.add_command(generate_report)
 
 if __name__ == '__main__':
     cli()

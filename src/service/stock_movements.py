@@ -97,3 +97,10 @@ class StockMovementService:
         :return: List of all StockMovement objects.
         """
         return self.repository.get_all_stock_movements()
+
+    def generate_movement_report(self) -> list:
+        """
+        Generates a report of all stock movements, including input name, supplier name,
+        movement type, quantity, and date.
+        """
+        return self.repository.generate_movement_report()
