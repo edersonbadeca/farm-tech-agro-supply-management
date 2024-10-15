@@ -92,6 +92,7 @@ farm-tech-agro-supply-management/
 5. **Run the application:**
     navigate to the src folder and run the app.py file
    ```bash
+   cd src/
    python app.py --help
    ```
 
