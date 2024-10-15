@@ -39,9 +39,6 @@ https://www.youtube.com/watch?v=jUzHLDWWmkI
 Para executar o código, siga as [instruções de instalação e configuração](src/README.md)
 
 
-Aqui está a seção "Histórico de lançamentos" em formato Markdown:
-
-
 ## 🗃 Histórico de lançamentos
 
 * 0.5.0 - 15/10/2024
